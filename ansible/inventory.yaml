@@ -1,0 +1,7 @@
+virtualmachines:
+  hosts:
+    brainstorm-instance:
+      ansible_host: 34.237.179.148
+
+  vars:
+    ansible_user: ubuntu

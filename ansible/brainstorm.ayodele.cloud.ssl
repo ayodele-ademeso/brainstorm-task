@@ -1,0 +1,53 @@
+server {
+    listen 80;
+    server_name brainstorm.ayodele.cloud www.brainstorm.ayodele.cloud;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name brainstorm.ayodele.cloud www.brainstorm.ayodele.cloud;
+
+    root /var/www/brainstorm.ayodele.cloud;
+
+    ssl_certificate /etc/letsencrypt/live/brainstorm.ayodele.cloud/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/brainstorm.ayodele.cloud/privkey.pem;
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+    # Enable gzip compression for text-based assets
+    gzip on;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # Enable browser caching for commonly used assets
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+        expires max;
+        add_header Cache-Control "public, max-age=31536000";
+    }
+
+    # Cache static content (e.g., images) for a longer period
+    location ~* \.(jpg|jpeg|gif|png|svg|woff|woff2|ttf|eot)$ {
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000";
+    }
+
+    # Disable access to sensitive files
+    location ~* /\.(ht|git|svn) {
+        deny all;
+    }
+
+    # Additional optimizations, e.g., enable TCP Fast Open and Keep-Alive
+    tcp_nodelay on;
+    keepalive_timeout 30s;
+}

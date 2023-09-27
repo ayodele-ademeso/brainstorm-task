@@ -1,0 +1,134 @@
+---
+- name: Install and Configure Web Server
+  hosts: virtualmachines
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Start Nginx service
+      service:
+        name: nginx.service
+        state: started
+        enabled: yes
+
+    - name: Create domain root folder
+      file:
+        path: /var/www/brainstorm.ayodele.cloud
+        state: directory
+        mode: '0755'
+
+    - name: Copy info.php file (for testing)
+      ansible.builtin.copy:
+        src: ./info.php
+        dest: /var/www/brainstorm.ayodele.cloud/
+
+    # - name: Copy wordpress files
+    #   ansible.builtin.copy:
+    #   # copy:
+    #     src: ../wordpress/
+    #     dest: /var/www/brainstorm.ayodele.cloud/
+    #     # remote_src: yes
+    #   tags: copydir
+
+    - name: Install Certbot for SSL
+      apt:
+        name: certbot
+        state: present
+
+    - name: Copy Nginx configuration file
+      copy:
+        src: ./brainstorm.ayodele.cloud  # Replace with the path to your local Nginx config file
+        dest: /etc/nginx/sites-available/brainstorm.ayodele.cloud
+      # notify: Reload Nginx
+
+    - name: Create symlink for Nginx config
+      file:
+        src: /etc/nginx/sites-available/brainstorm.ayodele.cloud
+        dest: /etc/nginx/sites-enabled/brainstorm.ayodele.cloud
+        state: link
+      # notify: Reload Nginx
+
+    - name: Obtain Let's Encrypt SSL certificate
+      shell: certbot certonly --webroot -w /var/www/brainstorm.ayodele.cloud -d brainstorm.ayodele.cloud -d www.brainstorm.ayodele.cloud --non-interactive --agree-tos --email nerdydreams92@gmail.com
+      ignore_errors: yes
+
+    - name: Configure Nginx for HTTPS
+      copy:
+        src: ./brainstorm.ayodele.cloud.ssl  # Create an SSL-enabled Nginx config template
+        dest: /etc/nginx/sites-available/brainstorm.ayodele.cloud
+
+    - name: Create symlink for SSL Nginx config
+      file:
+        src: /etc/nginx/sites-available/brainstorm.ayodele.cloud
+        dest: /etc/nginx/sites-enabled/brainstorm.ayodele.cloud
+        state: link
+
+    - name: Test Nginx configuration
+      command: nginx -t
+      register: nginx_test_result
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Reload Nginx if config test passed
+      service:
+        name: nginx
+        state: reloaded
+      when: nginx_test_result.rc == 0
+
+  # handlers:
+  #   - name: Reload Nginx
+  #     service:
+  #       name: nginx
+  #       state: reloaded
+
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Start MySQL service
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Install PHP and PHP-FPM
+      apt:
+        name: 
+          - php
+          - php-fpm
+          - php-mysql
+        state: present
+
+    - name: Ensure PHP-FPM service is started and enabled
+      service:
+        name: php8.1-fpm
+        state: started
+        enabled: yes
+
+    # - name: Create MySQL database
+    #   mysql_db:
+    #     name: brainstorm_dev
+    #     state: present
+    #   when: ansible_os_family == "Debian"  # Adjust for your OS
+
+    # - name: Create MySQL user
+    #   mysql_user:
+    #     name: brainstorm_dev
+    #     password: brainstormpass
+    #     priv: "brainstorm_dev.*:ALL"  # Grant privileges on the database
+    #     state: present
+    #   when: ansible_os_family == "Debian"  # Adjust for your OS
+
+    # - name: Reload MySQL service (if changes were made)
+    #   service:
+    #     name: mysql
+    #     state: reloaded
+    #   when: ansible_os_family == "Debian"  # Adjust for your OS
