@@ -24,22 +24,11 @@
         state: directory
         mode: '0755'
 
-    - name: Copy info.php file (for testing)
-      ansible.builtin.copy:
-        src: ./info.php
-        dest: /var/www/brainstorm.ayodele.cloud/
-
-    # - name: Copy wordpress files
-    #   ansible.builtin.copy:
-    #   # copy:
-    #     src: ../wordpress/
-    #     dest: /var/www/brainstorm.ayodele.cloud/
-    #     # remote_src: yes
-    #   tags: copydir
-
     - name: Install Certbot for SSL
       apt:
-        name: certbot
+        name: 
+        - certbot
+        - python3-certbot-nginx
         state: present
 
     - name: Copy Nginx configuration file
@@ -56,19 +45,19 @@
       # notify: Reload Nginx
 
     - name: Obtain Let's Encrypt SSL certificate
-      shell: certbot certonly --webroot -w /var/www/brainstorm.ayodele.cloud -d brainstorm.ayodele.cloud -d www.brainstorm.ayodele.cloud --non-interactive --agree-tos --email nerdydreams92@gmail.com
+      shell: certbot --nginx -d brainstorm.ayodele.cloud -d www.brainstorm.ayodele.cloud --non-interactive --agree-tos --email nerdydreams92@gmail.com
       ignore_errors: yes
 
-    - name: Configure Nginx for HTTPS
-      copy:
-        src: ./brainstorm.ayodele.cloud.ssl  # Create an SSL-enabled Nginx config template
-        dest: /etc/nginx/sites-available/brainstorm.ayodele.cloud
+    # - name: Configure Nginx for HTTPS
+    #   copy:
+    #     src: ./brainstorm.ayodele.cloud.ssl  # Create an SSL-enabled Nginx config template
+    #     dest: /etc/nginx/sites-available/brainstorm.ayodele.cloud
 
-    - name: Create symlink for SSL Nginx config
-      file:
-        src: /etc/nginx/sites-available/brainstorm.ayodele.cloud
-        dest: /etc/nginx/sites-enabled/brainstorm.ayodele.cloud
-        state: link
+    # - name: Create symlink for SSL Nginx config
+    #   file:
+    #     src: /etc/nginx/sites-available/brainstorm.ayodele.cloud
+    #     dest: /etc/nginx/sites-enabled/brainstorm.ayodele.cloud
+    #     state: link
 
     - name: Test Nginx configuration
       command: nginx -t
