@@ -24,6 +24,11 @@
         state: directory
         mode: '0755'
 
+    - name: Change owner of the folder to ubuntu
+      ansible.builtin.command:
+        cmd: chown -R ubuntu:ubuntu /var/www/brainstorm.ayodele.cloud
+      tags: chown
+
     - name: Install Certbot for SSL
       apt:
         name: 
