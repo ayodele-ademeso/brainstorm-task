@@ -1,0 +1,45 @@
+name: Deploy WordPress To EC2 instance
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gettext-base
+
+      - name: Substitute secrets in wp-config.php
+        run: |
+          # Set up environment variables here, e.g., from your secrets
+          export WORDPRESS_DB_NAME=${{ secrets.WORDPRESS_DB_NAME }}
+          export WORDPRESS_DB_USER=${{ secrets.WORDPRESS_DB_USER }}
+          export WORDPRESS_DB_PASSWORD=${{ secrets.WORDPRESS_DB_PASSWORD }}
+          export WORDPRESS_DB_HOST=${{ secretsWORDPRESS_DB_HOST }}
+          for i in "./wordpress/wp-config.php";
+            do 
+          envsubst < $i > $i.tmp && mv $i.tmp $i;
+          done
+
+          
+          # # Perform envsubst on wp-config.php and save the result
+          # envsubst < wordpress/wp-config.php.tmp > wordpress/wp-config.php
+
+      - name: Copy files to remote server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          source: "wordpress/"  # Source directory or files to copy
+          target: "var/www/brainstorm.ayodele.cloud/"  # Target directory on the remote server
