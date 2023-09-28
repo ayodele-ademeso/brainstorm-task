@@ -30,7 +30,7 @@ jobs:
           envsubst < $i > $i.tmp && mv $i.tmp $i;
           done
 
-          sed -i "s/ = 'wp_';/\$table_prefix = 'wp_';/" ../wordpress/wp-config.php
+          sed -i "s/ = 'wp_';/\$table_prefix = 'wp_';/" ./wordpress/wp-config.php
 
       - name: Copy files to remote server using rsync
         env:
