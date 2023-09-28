@@ -39,12 +39,14 @@ To get the project up and running locally, follow these steps:
     ```bash
     terraform init
     ```
-4. Run ```bash
-        terraform plan
-        ```, 
-5. Then run ```bash
-            terraform apply
-            ``` 
+4. Run 
+    ```bash
+    terraform plan
+    ``` 
+5. Then run 
+    ```bash
+    terraform apply
+    ``` 
     Enter `yes` when prompted.
 
 ### Ansible Setup
