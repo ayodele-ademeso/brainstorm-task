@@ -41,7 +41,7 @@ jobs:
           ssh-add ssh_key.pem
 
           # Replace these placeholders with your actual values
-          export REMOTE_USER=${secrets.REMOTE_USERNAME}
+          export REMOTE_USER=${secrets.REMOTE_USER}
           export REMOTE_HOST=${secrets.REMOTE_HOST}
           export REMOTE_PORT=${secrets.REMOTE_PORT}
           SOURCE_DIR="./wordpress/"  # Relative path to the source directory in your repository
