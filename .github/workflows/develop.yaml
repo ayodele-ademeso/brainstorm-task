@@ -37,6 +37,7 @@ jobs:
           # Set up SSH key
           echo "$SSH_PRIVATE_KEY" > ssh_key.pem
           chmod 600 ssh_key.pem
+          eval $(ssh-agent)
           ssh-add ssh_key.pem
 
           # Replace these placeholders with your actual values
