@@ -1,6 +1,6 @@
 # Brainstorm Technical Assignment
 
-Brief project description and purpose.
+![Architecture Diagram](website.png)
 
 ## Table of Contents
 
