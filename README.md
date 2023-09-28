@@ -16,10 +16,10 @@ Brief project description and purpose.
 Before you begin, ensure you have met the following requirements:
 
 - [AWS Account](https://aws.amazon.com/)
-- [AWS CLI]()
+- [AWS CLI](https://aws.amazon.com/cli/)
 - [Terraform](https://www.terraform.io/) installed locally.
 - [Ansible](https://www.ansible.com/) installed locally.
-- SSH key pairs for AWS access.
+- SSH key pair for AWS access.
 
 ## Getting Started
 
@@ -30,8 +30,8 @@ To get the project up and running locally, follow these steps:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/your-repo.git
-   cd your-repo
+   git clone https://github.com/ayodele-ademeso/brainstorm-task.git
+   cd brainstorm-task
    cd terraform
    ```
 2. Create a `terraform.tfvars` file with the variables listed in [`variables.tf`](./terraform/variables.tf)
@@ -39,7 +39,13 @@ To get the project up and running locally, follow these steps:
     ```bash
     terraform init
     ```
-4. Run `terraform plan`, then run `terraform apply`. Enter `yes` when prompted.
+4. Run ```bash
+        terraform plan
+        ```, 
+5. Then run ```bash
+            terraform apply
+            ``` 
+    Enter `yes` when prompted.
 
 ### Ansible Setup
 
