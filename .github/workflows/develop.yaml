@@ -24,7 +24,7 @@ jobs:
           export WORDPRESS_DB_NAME=${{ secrets.WORDPRESS_DB_NAME }}
           export WORDPRESS_DB_USER=${{ secrets.WORDPRESS_DB_USER }}
           export WORDPRESS_DB_PASSWORD=${{ secrets.WORDPRESS_DB_PASSWORD }}
-          export WORDPRESS_DB_HOST=${{ secretsWORDPRESS_DB_HOST }}
+          export WORDPRESS_DB_HOST=${{ secrets.WORDPRESS_DB_HOST }}
           for i in "./wordpress/wp-config.php";
             do 
           envsubst < $i > $i.tmp && mv $i.tmp $i;
