@@ -21,14 +21,16 @@ jobs:
       - name: Substitute secrets in wp-config.php
         run: |
           # Set up environment variables here, e.g., from your secrets
-          export WORDPRESS_DB_NAME=${{ secrets.WORDPRESS_DB_NAME }}
-          export WORDPRESS_DB_USER=${{ secrets.WORDPRESS_DB_USER }}
+          export WORDPRESS_DB_NAME='${{ secrets.WORDPRESS_DB_NAME }}'
+          export WORDPRESS_DB_USER='${{ secrets.WORDPRESS_DB_USER }}'
           export WORDPRESS_DB_PASSWORD=${{ secrets.WORDPRESS_DB_PASSWORD }}
           export WORDPRESS_DB_HOST=${{ secrets.WORDPRESS_DB_HOST }}
           for i in "./wordpress/wp-config.php";
             do 
           envsubst < $i > $i.tmp && mv $i.tmp $i;
           done
+
+          sed -i "s/ = 'wp_';/\$table_prefix = 'wp_';/" ../wordpress/wp-config.php
 
       - name: Copy files to remote server using rsync
         env:
@@ -44,8 +46,8 @@ jobs:
           export REMOTE_HOST=${{ secrets.REMOTE_HOST }}
           export REMOTE_PORT=${{ secrets.REMOTE_PORT }} 
           SOURCE_DIR="./wordpress/"  # Relative path to the source directory in your repository
-          TARGET_DIR="/var/www/brainstorm.ayodele.cloud/"   # Absolute path to the target directory on the remote server
+          TARGET_DIR="/var/www/brainstorm.ayodele.cloud"   # Absolute path to the target directory on the remote server
 
           # Use rsync to copy files
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -p $REMOTE_PORT" $SOURCE_DIR $REMOTE_USER@$REMOTE_HOST:$TARGET_DIR
+          rsync -avz --delete $SOURCE_DIR $REMOTE_USER@$REMOTE_HOST:$TARGET_DIR
 
