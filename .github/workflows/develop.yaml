@@ -49,5 +49,5 @@ jobs:
           TARGET_DIR="/var/www/brainstorm.ayodele.cloud"   # Absolute path to the target directory on the remote server
 
           # Use rsync to copy files
-          rsync -avz --delete $SOURCE_DIR $REMOTE_USER@$REMOTE_HOST:$TARGET_DIR
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -p 22" $SOURCE_DIR $REMOTE_USER@$REMOTE_HOST:$TARGET_DIR
 
