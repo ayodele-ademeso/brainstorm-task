@@ -1,16 +1,15 @@
 # AWS EC2 Security Group Terraform Module
 # Security Group for Public EC2 Host
 module "public_ec2_sg" {
-  source = "terraform-aws-modules/security-group/aws"
-  #version = "4.5.0"  
+  source  = "terraform-aws-modules/security-group/aws"
   version = "4.17.2"
 
   name        = "${local.name}-public-ec2-sg"
   description = "Security Group with SSH port open for everybody (IPv4 CIDR), egress ports are all world open"
   vpc_id      = module.vpc.vpc_id
   # Ingress Rules & CIDR Blocks
-  ingress_rules       = ["ssh-tcp", "http-80-tcp", "https-443-tcp"]
-  ingress_cidr_blocks = ["0.0.0.0/0"]
+  ingress_rules       = ["ssh-tcp", "http-80-tcp", "https-443-tcp", "mysql-tcp"]
+  ingress_cidr_blocks = ["0.0.0.0/0", "10.31.0.0/16"]
   # Egress Rule - all-all open
   egress_rules = ["all-all"]
   tags         = local.common_tags
@@ -19,9 +18,7 @@ module "public_ec2_sg" {
 # AWS EC2 Instance Terraform Module
 # EC2 Host - EC2 Instance that will be created in VPC Public Subnet
 module "ec2_public" {
-  source = "terraform-aws-modules/ec2-instance/aws"
-  #version = "~> 3.0"
-  #version = "3.3.0"
+  source  = "terraform-aws-modules/ec2-instance/aws"
   version = "5.0.0"
 
   name          = "${local.name}-instance"
